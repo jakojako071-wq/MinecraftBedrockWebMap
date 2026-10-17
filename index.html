@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#101827">
+  <title>Bedrock Park Web Map</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+  <link rel="stylesheet" href="./style.css">
+  <script src="./config.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script defer src="./app.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand-mark">◆</div>
+    <div class="brand"><span class="eyebrow">BEDROCK DEDICATED SERVER</span><h1 id="siteTitle">GRAND VOYAGE — PARK MAP</h1></div>
+    <div class="header-right"><span id="connection" class="pill warn">接続確認中</span><button id="adminToggle" class="button ghost">管理画面</button></div>
+  </header>
+  <main class="layout">
+    <section class="map-panel panel">
+      <div class="section-head"><div><span class="eyebrow">LIVE WORLD MAP</span><h2>ディズニーリゾート内マップ</h2></div><div class="map-tools"><button id="centerMap" class="button small">リゾート全体</button></div></div>
+      <div class="map-wrap"><div id="realMap" aria-label="OpenStreetMap上のプレイヤー位置"></div><div class="map-legend"><span><i class="dot player-dot"></i>オンラインプレイヤー</span><span>表示範囲：東京ディズニーリゾート周辺</span></div></div>
+      <div class="map-footer"><span id="coordsText">座標: --</span><span id="updatedText">最終更新: --</span></div>
+    </section>
+    <aside class="side-column">
+      <section class="panel status-panel">
+        <span class="eyebrow">PARK OPERATIONS</span><h2>パーク運営状況</h2>
+        <div id="statusBadge" class="status-badge">接続確認中</div>
+        <p id="statusMessage" class="message">サーバーから情報を読み込んでいます。</p>
+        <div class="stat-row"><span>オンライン人数</span><strong id="playerCount">—</strong></div>
+        <div class="stat-row"><span>ワールド</span><strong id="worldName">—</strong></div>
+      </section>
+      <section class="panel"><div class="section-head compact"><div><span class="eyebrow">PLAYERS</span><h2>プレイヤー</h2></div><span id="playerCountSmall" class="count">0</span></div><div id="playerList" class="player-list"><p class="muted">位置情報を待っています。</p></div></section>
+      <section class="panel"><span class="eyebrow">ZONES</span><h2>エリア一覧</h2><div id="zoneList" class="zone-list"></div></section>
+      <p class="footnote">位置はマイクラ座標を現実の地図へ換算した目安です。表示範囲外のプレイヤーは非表示になります。OpenStreetMap © OpenStreetMap contributors。</p>
+    </aside>
+  </main>
+  <div id="adminModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="adminHeading">
+    <div class="modal-card">
+      <div class="section-head"><div><span class="eyebrow">ADMIN CONSOLE</span><h2 id="adminHeading">運営管理画面</h2></div><button id="closeAdmin" class="button ghost">閉じる</button></div>
+      <p class="muted">管理トークンを入力して保存してください。トークンはブラウザ内だけに保持し、ウェブサイトのコードに書き込まないでください。</p>
+      <label>管理トークン<input id="adminToken" type="password" autocomplete="current-password" placeholder="MAP_ADMIN_TOKEN"></label>
+      <div class="form-grid"><label>サイトタイトル<input id="editTitle" maxlength="100"></label><label>ワールド名<input id="editWorld" maxlength="100"></label></div>
+      <label>運営状態<select id="editStatus"><option value="open">営業中</option><option value="building">準備中</option><option value="paused">休止中</option><option value="maintenance">メンテナンス中</option></select></label>
+      <label>お知らせ<textarea id="editMessage" rows="3" maxlength="1000"></textarea></label>
+      <div class="actions"><button id="saveConfig" class="button primary">運営情報を保存</button><span id="adminFeedback" class="muted"></span></div>
+      <hr>
+      <h3>エリアの追加・編集（Minecraft座標）</h3>
+      <input id="zoneId" type="hidden">
+      <div class="form-grid"><label>エリア名<input id="zoneName" maxlength="80" placeholder="例：中央広場"></label><label>種類<select id="zoneType"><option value="attraction">アトラクション</option><option value="build">建築</option><option value="staff">スタッフ専用</option><option value="closed">立入制限</option><option value="other">その他</option></select></label></div>
+      <div class="form-grid four"><label>X 最小<input id="zoneX1" type="number" value="-20"></label><label>Z 最小<input id="zoneZ1" type="number" value="-20"></label><label>X 最大<input id="zoneX2" type="number" value="20"></label><label>Z 最大<input id="zoneZ2" type="number" value="20"></label></div>
+      <div class="form-grid"><label>色<input id="zoneColor" type="color" value="#4f8cff"></label><label>説明<input id="zoneNote" maxlength="300" placeholder="エリアの説明"></label></div>
+      <div class="actions"><button id="saveZone" class="button primary">エリアを保存</button><button id="resetZone" class="button">新規入力に戻す</button></div>
+      <div id="adminZoneList" class="admin-zone-list"></div>
+    </div>
+  </div>
+  <footer>Bedrock Web Map · OpenStreetMap · Tokyo Disney Resort scope</footer>
+</body>
+</html>
